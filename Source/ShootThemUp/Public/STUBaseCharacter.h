@@ -51,6 +51,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void OnDeath();
 
   public:
 	// Called every frame
@@ -80,7 +81,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
 	void OnStartFire();
 	
-	void OnDeath();
+	
 	void OnHealthChanged(float Health, float HealthDeltd);
 
 	UFUNCTION()
