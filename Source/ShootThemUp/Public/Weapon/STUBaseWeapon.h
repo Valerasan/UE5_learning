@@ -27,6 +27,8 @@ public:
 	bool IsFiring() const;
 
 	void ChangeClip();
+	void IsNeedToReload();
+
 	bool CanReload() const;
 
 	FWeaponUIData GetUIData() const { return UIData; }
@@ -69,9 +71,9 @@ protected:
 	void MakeHit(FHitResult& HitResilt, const FVector& TraceStart, const FVector& TraceEnd);
 
 	void DecreasAmmo();
-	
-	bool IsClipEmpty() const;
 
+	bool IsClipEmpty() const;
+	
 	
 	void LogAmmo();
 

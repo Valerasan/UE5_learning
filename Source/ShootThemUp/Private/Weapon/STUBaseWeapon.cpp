@@ -118,11 +118,7 @@ void ASTUBaseWeapon::DecreasAmmo()
 
 	CurrentAmmo.Bullets--;
 	LogAmmo();
-	if (IsClipEmpty() && !IsAmmoEmpty())
-	{
-		StopFire();
-		OnClipEmpty.Broadcast(this);
-	}
+	IsNeedToReload();
 }
 
 bool ASTUBaseWeapon::IsAmmoEmpty() const
@@ -154,6 +150,15 @@ void ASTUBaseWeapon::ChangeClip()
 		CurrentAmmo.Clips--;
 	}
 	CurrentAmmo.Bullets = DefaultAmmo.Bullets;
+}
+
+void ASTUBaseWeapon::IsNeedToReload() 
+{
+	if (IsClipEmpty() && !IsAmmoEmpty())
+	{
+		StopFire();
+		OnClipEmpty.Broadcast(this);
+	}
 }
 
 bool ASTUBaseWeapon::CanReload() const

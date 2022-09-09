@@ -93,6 +93,7 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	AttachWeaponToSocket(CurrentWeapon, Chracter->GetMesh(), WeaponEquipSocketName);
 	EquipAnimInProgress = true;
 	PlayAnimMontage(EquipAnimMontage);
+	
 }
 
 void USTUWeaponComponent::StartFire()
@@ -116,6 +117,8 @@ void USTUWeaponComponent::NextWeapon()
 {
 	if (!CanEquip()) return;
 	CurrentWeaponIndex = (CurrentWeaponIndex + 1) % Weapons.Num();
+	ReloadAnimInProgress = false;
+
 	EquipWeapon(CurrentWeaponIndex);
 }
 
@@ -207,8 +210,11 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComp)
 	ACharacter* Chracter = Cast<ACharacter>(GetOwner());
 	if (!Chracter || Chracter->GetMesh() != MeshComp) return;
 
+	//OnEmptyClip(CurrentWeapon);
+	
 	EquipAnimInProgress = false;
-	// UE_LOG(LogWeaponComponent, Display, TEXT("Equip finished"));
+	UE_LOG(LogWeaponComponent, Warning, TEXT("Equip finished"));
+	CurrentWeapon->IsNeedToReload();
 }
 
 void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComp)
@@ -228,7 +234,7 @@ bool USTUWeaponComponent::CanFire() const
 
 bool USTUWeaponComponent::CanEquip() const
 {
-	return !EquipAnimInProgress && !ReloadAnimInProgress;
+	return !EquipAnimInProgress;
 }
 
 
