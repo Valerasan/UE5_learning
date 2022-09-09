@@ -22,6 +22,8 @@ USTUHealthComponent::USTUHealthComponent()
 
 bool USTUHealthComponent::TryToAddHealth(float HealthAmount)
 {
+	if (IsHealthFull() || IsDead()) return false;
+
 	SetHealth(Health + HealthAmount);
 	return true;
 }
@@ -93,4 +95,9 @@ void USTUHealthComponent::PlayCameraShake()
 	if (!Controller || !Controller->PlayerCameraManager) return;
 
 	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
+}
+
+bool USTUHealthComponent::IsHealthFull() const
+{
+	return FMath::IsNearlyEqual(Health, MaxHealth);
 }

@@ -10,7 +10,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogHealthPickup, All, All);
 bool ASTUHealthPickup::GivePikupTo(APawn* PlayrPawn)
 {
 	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(PlayrPawn);
-	if (!HealthComponent || HealthComponent->IsDead()) return false;
+	if (!HealthComponent) return false;
 
 	return HealthComponent->TryToAddHealth(HealthAmount);
 }

@@ -45,6 +45,12 @@ void ASTUBasePickup::Tick(float DeltaTime)
 	AddActorLocalRotation(FRotator(0.f, RotationYaw, 0.f));
 }
 
+bool ASTUBasePickup::CouldBeTaken() const
+{
+	return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle);
+	//return CouldBeTakenTest;
+}
+
 bool ASTUBasePickup::GivePikupTo(APawn* PlayrPawn)
 {
 	return false;
@@ -58,7 +64,7 @@ void ASTUBasePickup::PickupWastaken()
 		GetRootComponent()->SetVisibility(false, true);
 	}
 
-	FTimerHandle RespawnTimerHandle;
+	
 
 	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
 }

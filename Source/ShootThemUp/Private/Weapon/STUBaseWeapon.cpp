@@ -130,6 +130,7 @@ bool ASTUBaseWeapon::IsAmmoEmpty() const
 	return !CurrentAmmo.Infinite && CurrentAmmo.Clips == 0 && IsClipEmpty();
 }
 
+
 bool ASTUBaseWeapon::IsClipEmpty() const
 {
 
