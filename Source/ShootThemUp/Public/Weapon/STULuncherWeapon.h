@@ -20,7 +20,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	TSubclassOf<ASTUProjectile> ProjectileClass;
 
-
 	virtual void MakeShot() override;
 	
 };

@@ -3,9 +3,15 @@
 #include "Components/STUAIWeaponComponent.h"
 #include "Weapon/STUBaseWeapon.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogAIWeaponComponent, All, All);
+
 void USTUAIWeaponComponent::StartFire()
 {
-	if (!CanFire()) return;
+	if (!CanFire())
+	{
+		
+		return;
+	}
 
 	if (CurrentWeapon->IsAmmoEmpty())
 	{
@@ -30,6 +36,7 @@ void USTUAIWeaponComponent::NextWeapon()
 	if (CurrentWeaponIndex != NextIndex)
 	{
 		CurrentWeaponIndex = NextIndex;
+		ReloadAnimInProgress = false;
 		EquipWeapon(CurrentWeaponIndex);
 	}
 }

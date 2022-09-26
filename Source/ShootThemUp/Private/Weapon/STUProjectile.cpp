@@ -55,7 +55,7 @@ void ASTUProjectile::OnProjectileHit(
 		UDamageType::StaticClass(),					 //
 		{GetOwner()},								 //
 		this,										 //
-		nullptr,									 //
+		GetControllerChracter(),					 //
 		DoFullDamage);
 
 	// DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.f);

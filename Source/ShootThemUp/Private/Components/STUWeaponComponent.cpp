@@ -6,6 +6,7 @@
 #include "Animations/STUEquipAnimNotify.h"
 #include "Animations/STUReloadFinishedAnimNotify.h"
 #include "Animations/AnimUtils.h"
+#include "STUPlayerCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
@@ -71,7 +72,7 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 {
 	if (WeaponIndex < 0 || WeaponIndex >= Weapons.Num())
 	{
-		UE_LOG(LogWeaponComponent, Warning, TEXT("Invalid weapon index"));
+		//UE_LOG(LogWeaponComponent, Warning, TEXT("Invalid weapon index"));
 		return;
 	}
 
@@ -98,7 +99,8 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 
 void USTUWeaponComponent::StartFire()
 {
-	if (!CanFire()) return;
+	const auto Actor = Cast <ASTUPlayerCharacter>(GetOwner());
+	if (!CanFire() || Actor->IsRunning()) return;
 	CurrentWeapon->StartFire();
 }
 
@@ -189,7 +191,7 @@ void USTUWeaponComponent::InitAnimations()
 	}
 	else
 	{
-		UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
+		//UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
 		checkNoEntry();
 	}
 
@@ -198,7 +200,7 @@ void USTUWeaponComponent::InitAnimations()
 		auto ReloadFinishedNotify = AnimUtils::FindNotifyByClass<USTUReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
 		if (!ReloadFinishedNotify) 
 		{
-			UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
+			//UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
 			checkNoEntry();
 		}
 		ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
@@ -213,7 +215,7 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComp)
 	//OnEmptyClip(CurrentWeapon);
 	
 	EquipAnimInProgress = false;
-	UE_LOG(LogWeaponComponent, Warning, TEXT("Equip finished"));
+	//UE_LOG(LogWeaponComponent, Warning, TEXT("Equip finished"));
 	CurrentWeapon->IsNeedToReload();
 }
 
@@ -229,6 +231,11 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComp)
 
 bool USTUWeaponComponent::CanFire() const
 {
+	//UE_LOG(LogWeaponComponent, Warning, TEXT("============================"));
+	//UE_LOG(LogWeaponComponent, Warning, TEXT("Equip: %s"), EquipAnimInProgress ? TEXT("true") : TEXT("false"));
+	//UE_LOG(LogWeaponComponent, Warning, TEXT("Reload: %s"), ReloadAnimInProgress ? TEXT("true") : TEXT("false"));
+	//UE_LOG(LogWeaponComponent, Warning, TEXT("============================"));
+
 	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 

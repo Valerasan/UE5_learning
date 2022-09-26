@@ -49,14 +49,7 @@ bool ASTUBaseWeapon::IsFiring() const
 
 void ASTUBaseWeapon::MakeShot() {}
 
-APlayerController* ASTUBaseWeapon::GetPlayerController() const
-{
 
-	const auto Player = Cast<ACharacter>(GetOwner());
-	if (!Player) return nullptr;
-
-	return Player->GetController<APlayerController>();
-}
 
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
 {
@@ -66,7 +59,7 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 
 	if (STUCharacter->IsPlayerControlled())
 	{
-		const auto Controller = GetPlayerController();
+		const auto Controller = STUCharacter->GetController<APlayerController>();
 		if (!Controller) return false;
 
 		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
@@ -172,7 +165,7 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 
 	if (IsAmmoEmpty())
 	{
-		UE_LOG(LogBaseWeapon, Display, TEXT("Ammo was empty"));
+		//UE_LOG(LogBaseWeapon, Display, TEXT("Ammo was empty"));
 		CurrentAmmo.Clips = FMath::Clamp(ClipsAmount, 0, DefaultAmmo.Clips + 1);
 		OnClipEmpty.Broadcast(this);
 	}
@@ -182,18 +175,18 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 		if (DefaultAmmo.Clips - NextClipsAmmount >= 0)
 		{
 			CurrentAmmo.Clips = NextClipsAmmount;
-			UE_LOG(LogBaseWeapon, Display, TEXT("Clips were added"));
+			//UE_LOG(LogBaseWeapon, Display, TEXT("Clips were added"));
 		}
 		else
 		{
-			UE_LOG(LogBaseWeapon, Display, TEXT("Ammo is full"));
+			//UE_LOG(LogBaseWeapon, Display, TEXT("Ammo is full"));
 			CurrentAmmo.Clips = DefaultAmmo.Clips;
 			CurrentAmmo.Bullets = DefaultAmmo.Bullets;
 		}
 	}
 	else
 	{
-		UE_LOG(LogBaseWeapon, Display, TEXT("Bullets were added"))
+		//UE_LOG(LogBaseWeapon, Display, TEXT("Bullets were added"))
 		CurrentAmmo.Bullets = DefaultAmmo.Bullets;
 	}
 

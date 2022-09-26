@@ -41,6 +41,7 @@ public:
 private:
 
 	void OnHealthChanged(float Health, float HealthDeltd);
+	void OnNewPawn(APawn* NewPawn);
 	//USTUWeaponComponent* GetWeaponComponetn() const;
 	//USTUHealthComponent* GetHealthComponent() const;
 };

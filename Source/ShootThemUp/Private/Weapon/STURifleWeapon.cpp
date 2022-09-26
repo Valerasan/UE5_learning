@@ -33,7 +33,7 @@ void ASTURifleWeapon::StopFire()
 
 void ASTURifleWeapon::MakeShot()
 {
-	UE_LOG(LogTemp, Display, TEXT("Make Shot"));
+	//UE_LOG(LogTemp, Display, TEXT("Make Shot"));
 	if (!GetWorld() || IsAmmoEmpty())
 	{
 		StopFire();
@@ -90,7 +90,7 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
 	const auto DamageActor = HitResult.GetActor();
 	if (!DamageActor) return;
 
-	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), this);
+	DamageActor->TakeDamage(DamageAmount, FDamageEvent{}, GetControllerChracter(), this);
 }
 
 void ASTURifleWeapon::InitMuzzleFX()
@@ -119,4 +119,11 @@ void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& Tra
 		TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
 	}
 
+}
+
+
+AController* ASTURifleWeapon::GetControllerChracter() const
+{
+	const auto Pawn = Cast<APawn>(GetOwner());
+	return Pawn ? Pawn->GetController() : nullptr;
 }

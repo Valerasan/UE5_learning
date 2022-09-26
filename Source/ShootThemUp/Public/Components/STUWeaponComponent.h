@@ -51,6 +51,8 @@ protected:
 
 	int32 CurrentWeaponIndex = 0;
 
+	bool ReloadAnimInProgress = false;
+
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -63,7 +65,7 @@ private:
 	UAnimMontage* CurrentReloadAnimMontage = nullptr;
 
 	bool EquipAnimInProgress = false;
-	bool ReloadAnimInProgress = false;
+	
 
 	void InitAnimations();
 	void SpawnWeapons();
