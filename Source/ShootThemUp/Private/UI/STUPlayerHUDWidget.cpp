@@ -8,7 +8,7 @@
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
 	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
-		
+
 	if (!HealthComponent) return 0.f;
 	return HealthComponent->GetHealthPercent();
 }
@@ -43,18 +43,18 @@ bool USTUPlayerHUDWidget::IsPlayerSpectating() const
 	return Contriller && Contriller->GetStateName() == NAME_Spectating;
 }
 
-bool USTUPlayerHUDWidget::Initialize()
+void USTUPlayerHUDWidget::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
 
 	if (GetOwningPlayer())
 	{
 		GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHUDWidget::OnNewPawn);
 		OnNewPawn(GetOwningPlayerPawn());
 	}
-	return Super::Initialize();
 }
 
-void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn) 
+void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
 {
 	const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(NewPawn);
 	if (HealthComponent && !HealthComponent->OnHealthChanged.IsBoundToObject(this))
@@ -71,8 +71,7 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDeltd)
 	}
 }
 
-
-//USTUWeaponComponent* USTUPlayerHUDWidget::GetWeaponComponetn() const
+// USTUWeaponComponent* USTUPlayerHUDWidget::GetWeaponComponetn() const
 //{
 //	const auto Player = GetOwningPlayerPawn();
 //	if (!Player) return nullptr;
@@ -81,9 +80,9 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDeltd)
 //
 //	const auto WeaponComponent = Cast<USTUWeaponComponent>(Component);
 //	return WeaponComponent;
-//}
+// }
 //
-//USTUHealthComponent* USTUPlayerHUDWidget::GetHealthComponent() const
+// USTUHealthComponent* USTUPlayerHUDWidget::GetHealthComponent() const
 //{
 //	const auto Player = GetOwningPlayerPawn();
 //	if (!Player) return nullptr;
@@ -92,4 +91,4 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDeltd)
 //
 //	const auto HealthComponent = Cast<USTUHealthComponent>(Component);
 //	return HealthComponent;
-//}
+// }

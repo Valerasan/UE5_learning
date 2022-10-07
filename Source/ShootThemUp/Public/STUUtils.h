@@ -5,23 +5,25 @@
 class STUUtils
 {
 
-	public:
-		template<typename T>
-		static T* GetSTUPlayerComponent(AActor* PlyaerPawn)
-		{
-			if (!PlyaerPawn) return nullptr;
+public:
+	template <typename T>
+	static T* GetSTUPlayerComponent(AActor* PlyaerPawn)
+	{
+		if (!PlyaerPawn) return nullptr;
 
-			const auto Component = PlyaerPawn->GetComponentByClass(T::StaticClass());
-			return Cast<T>(Component);
-		}
+		const auto Component = PlyaerPawn->GetComponentByClass(T::StaticClass());
+		return Cast<T>(Component);
+	}
 
-		bool static AreEnemies(AController* Controller1, AController* Controller2) 
-		{ 
-			if (!Controller1 || !Controller2 || Controller2 == Controller1) return false;
+	bool static AreEnemies(AController* Controller1, AController* Controller2)
+	{
+		if (!Controller1 || !Controller2 || Controller2 == Controller1) return false;
 
-			const auto PlaerState1 = Cast<ASTUPlayerState>(Controller1->PlayerState);
-			const auto PlaerState2 = Cast<ASTUPlayerState>(Controller2->PlayerState);
+		const auto PlaerState1 = Cast<ASTUPlayerState>(Controller1->PlayerState);
+		const auto PlaerState2 = Cast<ASTUPlayerState>(Controller2->PlayerState);
 
-			return PlaerState1 && PlaerState2 && PlaerState2->GetTeamID() != PlaerState1->GetTeamID();
-		}
+		return PlaerState1 && PlaerState2 && PlaerState2->GetTeamID() != PlaerState1->GetTeamID();
+	}
+
+	static FText TextFromInt(int32 Number) { return FText::FromString(FString::FromInt(Number)); }
 };
