@@ -26,6 +26,13 @@ void USTUMenuWidget::NativeOnInitialized()
 
 void USTUMenuWidget::OnStartGame()
 {
+	PlayAnimation(HideAnimation);
+}
+
+void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
+{
+	if (Animation != HideAnimation) return;
+
 	const auto STUGameInstance = GetSTUGameInstance();
 	if (!STUGameInstance) return;
 
@@ -36,8 +43,6 @@ void USTUMenuWidget::OnQuitGame()
 {
 	UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
 }
-
-
 
 void USTUMenuWidget::InitLevelItems()
 {
@@ -87,7 +92,6 @@ void USTUMenuWidget::OnLevelSelected(const FLevelData& Data)
 		}
 	}
 }
-
 
 USTUGameInstance* USTUMenuWidget::GetSTUGameInstance() const
 {
