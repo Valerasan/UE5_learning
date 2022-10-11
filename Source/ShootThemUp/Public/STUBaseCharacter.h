@@ -6,20 +6,18 @@
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
-
 class USTUHealthComponent;
 class USTUWeaponComponent;
-	
+
 UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-  public:
+public:
 	// Sets default values for this character's properties
 	ASTUBaseCharacter(const FObjectInitializer& ObjInit);
 
-  protected:
-	
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USTUHealthComponent* HealthComponent;
 
@@ -38,36 +36,26 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 	UPROPERTY(EditDefaultsOnly, Category = "Material")
 	FName MaterialColorName = "Paint Color";
 
-
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void OnDeath();
+	virtual void OnHealthChanged(float Health, float HealthDelta);
 
-  public:
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-
-    UFUNCTION(BlueprintCallable, Category = "Movement")
-	virtual bool IsRunning() const; 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	virtual bool IsRunning() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-    float GetMovementDirection() const;
+	float GetMovementDirection() const;
 
 	void SetPlayerColor(const FLinearColor& Color);
 
-  private:
-
-
+private:
 	void OnStartFire();
-	
-	
-	void OnHealthChanged(float Health, float HealthDeltd);
 
 	UFUNCTION()
 	void OnGroundLanded(const FHitResult& Hit);
-
-	
 };
