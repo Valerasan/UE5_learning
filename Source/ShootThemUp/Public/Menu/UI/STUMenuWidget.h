@@ -25,6 +25,9 @@ protected:
 	UButton* QuitGameButton;
 
 	UPROPERTY(meta = (BindWidget))
+	UButton* SettingsButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* LevelItemsBox;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
@@ -45,6 +48,9 @@ private:
 
 	UFUNCTION()
 	void OnQuitGame();
+
+	UFUNCTION()
+	void OnSettingsButton();
 
 	void InitLevelItems();
 	void OnLevelSelected(const FLevelData& Data);

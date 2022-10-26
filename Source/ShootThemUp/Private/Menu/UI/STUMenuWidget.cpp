@@ -6,6 +6,7 @@
 #include "STUGameInstance.h"
 #include "Components/HorizontalBox.h"
 #include "Menu/UI/STULevelItemWidgetWidget.h"
+#include "Menu/UI/STUMenuHUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUMenuWidget, All, All);
 
@@ -20,6 +21,10 @@ void USTUMenuWidget::NativeOnInitialized()
 	if (QuitGameButton)
 	{
 		QuitGameButton->OnClicked.AddDynamic(this, &USTUMenuWidget::OnQuitGame);
+	}
+	if (SettingsButton)
+	{
+		SettingsButton->OnClicked.AddDynamic(this, &USTUMenuWidget::OnSettingsButton);
 	}
 	InitLevelItems();
 }
@@ -42,6 +47,17 @@ void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* 
 void USTUMenuWidget::OnQuitGame()
 {
 	UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
+}
+
+void USTUMenuWidget::OnSettingsButton() 
+{
+	auto HUD = Cast<ASTUMenuHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+	// UE_LOG(LogTemp, Warning, TEXT("Texture: %i"), GEngine->GameUserSettings->GetTextureQuality());
+	SetVisibility(ESlateVisibility::Hidden);
+	if (HUD)
+	{
+		HUD->SetSettingsVisibility(true);
+	}
 }
 
 void USTUMenuWidget::InitLevelItems()
