@@ -9,6 +9,7 @@
 class USTUWeaponFXComponent;
 class UNiagaraComponent;
 class UNiagaraSystem;
+class UAudioComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
@@ -20,13 +21,14 @@ public:
 
 	virtual void StartFire() override;
 	virtual void StopFire() override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	float DamageAmount = 10.f;
+	virtual void Zoom(bool Enable);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float TimeBetweenShots = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float DamageAmount = 10.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float BulletSpread = 1.5f;
@@ -40,6 +42,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	FString TraceTargetName = "TraceTarget";
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float FOVZoomAngle = 50.f;
+
 	virtual void BeginPlay() override;
 	virtual void MakeShot() override;
 	virtual bool GetTraceDate(FVector& TraceStart, FVector& TraceEnd) const override;
@@ -50,11 +55,15 @@ private:
 	UPROPERTY()
 	UNiagaraComponent* MuzzleFXComponent;
 
+	UPROPERTY()
+	UAudioComponent* FireAudioComponent;
+
 	void MakeDamage(const FHitResult& HitResult);
-	void InitMuzzleFX();
-	void SetMuzzleFXVisibility(bool Visible);
+	void InitFX();
+	void SetFXActive(bool IsActive);
 	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 
-	
 	AController* GetControllerChracter() const;
+
+	float DefaultCameraFOV = 90.0f;
 };

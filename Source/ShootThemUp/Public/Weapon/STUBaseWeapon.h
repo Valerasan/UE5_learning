@@ -7,10 +7,10 @@
 #include "STUCoreType.h"
 #include "STUBaseWeapon.generated.h"
 
-
 class USkeletalMeshComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
+class USoundCue;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -38,6 +38,8 @@ public:
 	bool IsAmmoEmpty() const;
 	bool IsAmmoFull() const;
 
+	virtual void Zoom(bool Enable){};
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
@@ -57,14 +59,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 	UNiagaraSystem* MuzzleFX;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+	USoundCue* FireSound;
 
 	virtual void BeginPlay() override;
 
 	virtual void MakeShot();
 	virtual bool GetTraceDate(FVector& TraceStart, FVector& TraceEnd) const;
 
-	
 	bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 	FVector GetMuzzleWorldLocation() const;
 
@@ -73,8 +75,7 @@ protected:
 	void DecreasAmmo();
 
 	bool IsClipEmpty() const;
-	
-	
+
 	void LogAmmo();
 
 	UNiagaraComponent* SpawnMuzzleFX();

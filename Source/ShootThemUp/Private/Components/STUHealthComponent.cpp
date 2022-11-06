@@ -1,13 +1,14 @@
 // ShootThemUp All Rights Reserved
 
 #include "Components/STUHealthComponent.h"
-#include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraShakeBase.h"
 #include "STUGameModeBase.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Perception/AISense_Damage.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
@@ -40,12 +41,19 @@ void USTUHealthComponent::BeginPlay()
 	AActor* ComponentOwner = GetOwner();
 	if (ComponentOwner)
 	{
-		ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamageHandle);
+		ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+		ComponentOwner->OnTakePointDamage.AddDynamic(this, &USTUHealthComponent::OnTakePointDamage);
+		ComponentOwner->OnTakeRadialDamage.AddDynamic(this, &USTUHealthComponent::OnTakeRadialDamage);
 	}
 }
 
-void USTUHealthComponent::OnTakeAnyDamageHandle(
-	AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+void USTUHealthComponent::OnTakeAnyDamage(
+	AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+{
+	// UE_LOG(LogHealthComponent, Display, TEXT("On any damage: %f"), Damage);
+}
+
+void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
 {
 	if (Damage <= 0.0f || IsDead() || !GetWorld()) return;
 
@@ -64,6 +72,7 @@ void USTUHealthComponent::OnTakeAnyDamageHandle(
 			HealDelayTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
 	}
 	PlayCameraShake();
+	ReportDamageEvent(Damage, InstigatedBy);
 }
 
 void USTUHealthComponent::HealUpdate()
@@ -80,7 +89,6 @@ void USTUHealthComponent::SetHealth(float NewHealth)
 {
 	const auto NextHealth = FMath::Clamp(NewHealth, 0, MaxHealth);
 	const auto HealthDelta = NextHealth - Health;
-
 
 	Health = FMath::Clamp(NewHealth, 0.f, MaxHealth);
 	OnHealthChanged.Broadcast(Health, HealthDelta);
@@ -116,4 +124,49 @@ void USTUHealthComponent::Killed(AController* KillerController)
 bool USTUHealthComponent::IsHealthFull() const
 {
 	return FMath::IsNearlyEqual(Health, MaxHealth);
+}
+
+void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation,
+	class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType,
+	AActor* DamageCauser)
+{
+	// UE_LOG(LogHealthComponent, Display, TEXT("DamageModifier: %f"), GetPointDamageModifier(DamagedActor, BoneName));
+	const auto FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
+	UE_LOG(LogHealthComponent, Display, TEXT("On point damage: %f, final damage: %f, bone: %s"), Damage, FinalDamage, *BoneName.ToString());
+
+	ApplyDamage(FinalDamage, InstigatedBy);
+}
+
+void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin,
+	FHitResult HitInfo, class AController* InstigatedBy, AActor* DamageCauser)
+{
+	UE_LOG(LogHealthComponent, Display, TEXT("On radial damage: %f"), Damage);
+
+	ApplyDamage(Damage, InstigatedBy);
+}
+
+float USTUHealthComponent::GetPointDamageModifier(AActor* DmagedActor, const FName& BoneName)
+{
+	const auto Character = Cast<ACharacter>(DmagedActor);
+	if (!Character ||			  //
+		!Character->GetMesh() ||  //
+		!Character->GetMesh()->GetBodyInstance(BoneName))
+		return 1.0f;
+
+	const auto PhysMaterial = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
+	if (!PhysMaterial || !DamageModifiers.Contains(PhysMaterial)) return 1.0f;
+
+	return DamageModifiers[PhysMaterial];
+}
+
+void USTUHealthComponent::ReportDamageEvent(float Damage, AController* InstigatedBy)
+{
+	if (!InstigatedBy || !InstigatedBy->GetPawn() || !GetOwner()) return;
+
+	UAISense_Damage::ReportDamageEvent(GetWorld(),	  //
+		GetOwner(),									  //
+		InstigatedBy->GetPawn(),					  //
+		Damage,										  //
+		InstigatedBy->GetPawn()->GetActorLocation(),  //
+		GetOwner()->GetActorLocation());
 }

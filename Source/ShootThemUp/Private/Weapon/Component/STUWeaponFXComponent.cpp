@@ -5,6 +5,7 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values for this component's properties
 USTUWeaponFXComponent::USTUWeaponFXComponent()
@@ -30,6 +31,7 @@ void USTUWeaponFXComponent::PlayInpactFX(const FHitResult& Hit)
 		ImpactData.NiagaraSystem,								//
 		Hit.ImpactPoint,										//
 		Hit.ImpactNormal.Rotation());
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), ImpactData.ImpactSound, Hit.ImpactPoint);
 
 	auto DecalComponent = UGameplayStatics::SpawnDecalAtLocation(GetWorld(),  //
 		ImpactData.DecalData.Material,										  //

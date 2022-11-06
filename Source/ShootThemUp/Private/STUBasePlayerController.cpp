@@ -4,6 +4,7 @@
 #include "STUBasePlayerController.h"
 #include "Components/STURespawnComponent.h"
 #include "STUGameModeBase.h"
+#include "STUGameInstance.h"
 
 ASTUBasePlayerController::ASTUBasePlayerController() 
 {
@@ -39,6 +40,17 @@ void ASTUBasePlayerController::OnMatchStateChanged(ESTUMatchState State)
 	}
 }
 
+void ASTUBasePlayerController::OnMuteSound() 
+{
+	if (!GetWorld()) return;
+
+	const auto STUGameInstance = GetWorld()->GetGameInstance<USTUGameInstance>();
+	if (!STUGameInstance) return;
+
+	STUGameInstance->ToggleVolume();
+
+}
+
 void ASTUBasePlayerController::OnPossess(APawn* InPawn) 
 {
 	Super::OnPossess(InPawn);
@@ -52,9 +64,10 @@ void ASTUBasePlayerController::SetupInputComponent()
 	if (!InputComponent) return;
 
 	InputComponent->BindAction("PauseGame", IE_Pressed, this, &ASTUBasePlayerController::OnPauseGame);
+	InputComponent->BindAction("Mute", IE_Pressed, this, &ASTUBasePlayerController::OnMuteSound);
 }
 
-void ASTUBasePlayerController::OnPauseGame()
+void ASTUBasePlayerController::OnPauseGame() 
 {
 	if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
 

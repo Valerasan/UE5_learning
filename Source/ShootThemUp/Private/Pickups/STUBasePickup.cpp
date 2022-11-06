@@ -2,6 +2,8 @@
 
 #include "Pickups/STUBasePickup.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
 
@@ -64,7 +66,7 @@ void ASTUBasePickup::PickupWastaken()
 		GetRootComponent()->SetVisibility(false, true);
 	}
 
-	
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), PickupSound, GetActorLocation());
 
 	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
 }
